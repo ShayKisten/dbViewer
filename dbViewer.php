@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License along with Foo
  * Description:       View your WordPress database tables and data from your WordPress admin dashboard.
  * Version:           1.0.0
  * Author:            ShayKisten
- * Author URI:        https://shaykisten.com/products-dbviewer/
+ * Author URI:        https://shaykisten.com/
  * License:           GPL-3.0+
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain:       dBViewer
@@ -62,22 +62,22 @@ add_action( 'admin_menu', 'add_dbViewer_about_page');
 /**
  * Function to get list of tables in WordPress db.
  * 
- * Inserts an array of <option> tags into HTML. To be called inside <select> tags.
+ * Returns an array of tables from the WordPress Database.
  * add_filter hook used to hook into function.
  * Use apply_filters('table_list', $) to use filter.
  * 
  * @since 1.0.0 
  */
-function get_tables(){
-	global $wpdb;
-	$tables = $wpdb->get_results("SHOW TABLES FROM ".$wpdb->dbname, 'ARRAY_N');
-	foreach ($tables as $table) {
-		echo('<option value="' . $table[0] .'">');
-		echo($table[0]);
-		echo('</option>');
-	}
+function dbViewer_get_tables(){
+    global $wpdb;
+    $tables = [];
+    $raw_tables = $wpdb->get_results("SHOW TABLES FROM ".$wpdb->dbname, 'ARRAY_N');
+    foreach($raw_tables as $tbl){
+        array_push($tables, $tbl[0]);
+    }
+    return $tables;
 }
-add_filter('table_list', 'get_tables');
+add_filter('table_list', 'dbViewer_get_tables');
 
 /**
  * Function to get data from the table in the WordPress db.
@@ -88,7 +88,7 @@ add_filter('table_list', 'get_tables');
  * 
  * @since 1.0.0 
  */
-function get_table($table){
+function dbViewer_get_table($table){
 	global $wpdb;
 	$table_name = $table;
 	$field_names = $wpdb->get_results("DESCRIBE $table_name"); //field_names[index]->Field = field name
@@ -96,7 +96,7 @@ function get_table($table){
 	echo('<tr>');
 	foreach ($field_names as $field_name) {
 		echo('<th>');
-		echo($field_name->Field);
+		echo(esc_html($field_name->Field));
 		echo('</th>');
 	}
 	echo('</tr>');
@@ -105,27 +105,10 @@ function get_table($table){
 		echo('<tr>');
 		foreach ($field as $data) {
 			echo('<td>');
-			echo($data);
+			echo(esc_html($data));
 			echo('</td>');
 		}
 		echo('</tr>');
 	}
 }
-add_filter('table_value', 'get_table');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+add_filter('table_value', 'dbViewer_get_table');
