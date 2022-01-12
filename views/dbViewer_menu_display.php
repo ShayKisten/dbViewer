@@ -35,21 +35,36 @@ You should have received a copy of the GNU General Public License along with Foo
 		<form method="post">
 			<select name="table_select" onchange="this.form.submit()">
 				<option>---Select A Table---</option>
-				<?php $tables = apply_filters('table_list', $tables)?>
+				<?php
+					$tables = apply_filters('table_list', $tables);
+					foreach ($tables as $table) {
+						echo('<option value="' . esc_html($table) .'">');
+						echo(esc_html($table));
+						echo('</option>');
+					}
+				?>
 			</select>
 
 		</form>
 		<?php
 			$table = null;
 			if(isset($_POST['table_select'])){
-    			$table = $_POST['table_select'];
+    			$table = sanitize_text_field($_POST['table_select']);
+    			//Validate Input
+    			if (in_array($table, $tables)){
+    				echo('<h2>');
+					echo(esc_html($table));
+					echo('</h2>');
+					echo('<table>');
+					apply_filters('table_value', $table);
+					echo('</table>');
+    			}else{
+    				echo('Invalid table selected.');
+    			}
+			}else{
+				echo('Please select a table.');
 			}
-			echo('<h2>');
-			echo($table);
-			echo('</h2>');
-			echo('<table>');
-			apply_filters('table_value', $table);
-			echo('</table>')
+			
 		?>
 	</div>
 </div>
