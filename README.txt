@@ -2,7 +2,7 @@
 Contributors: shaykisten
 Donate link: https://www.paypal.com/donate?hosted_button_id=FMY5DPT2XVGUU
 Requires at least: 5.8.3
-Tested up to: 5.8.3
+Tested up to: 5.9
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPL-3.0+
